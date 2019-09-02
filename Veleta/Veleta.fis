@@ -1,0 +1,75 @@
+[System]
+Name='Veleta'
+Type='mamdani'
+Version=2.0
+NumInputs=2
+NumOutputs=2
+NumRules=25
+AndMethod='min'
+OrMethod='max'
+ImpMethod='min'
+AggMethod='max'
+DefuzzMethod='centroid'
+
+[Input1]
+Name='PosVeleta'
+Range=[0 360]
+NumMFs=5
+MF1='NorteE':'trapmf',[-81 -9 22.5 90]
+MF2='Este':'trapmf',[0 67.5 112.5 180]
+MF3='Sur':'trapmf',[90 157.5 202.5 270]
+MF4='Oeste':'trapmf',[180 247.5 292.5 360]
+MF5='NorteO':'trapmf',[270 337.5 369 441]
+
+[Input2]
+Name='PosGenerador'
+Range=[0 360]
+NumMFs=5
+MF1='NorteE':'trapmf',[-81 -9 22.5 90]
+MF2='Este':'trapmf',[0 67.5 112.5 180]
+MF3='Sur':'trapmf',[90 157.5 202.5 270]
+MF4='Oeste':'trapmf',[180 247.5 292.5 360]
+MF5='NorteO':'trapmf',[279 351 369 441]
+
+[Output1]
+Name='Velocidad'
+Range=[0 100]
+NumMFs=3
+MF1='Lenta':'trapmf',[-45 -5 5 45]
+MF2='Media':'trapmf',[5 45 55 95]
+MF3='Rapida':'trapmf',[55 95 105 145]
+
+[Output2]
+Name='Direccion'
+Range=[0 3]
+NumMFs=3
+MF1='Antihorario':'trapmf',[-1.35 -0.15 1 2]
+MF2='No.moverse':'trapmf',[1 1.35 1.65 2]
+MF3='Horario':'trapmf',[1 2 3.15 4.35]
+
+[Rules]
+1 1, 1 2 (1) : 1
+1 2, 2 3 (1) : 1
+1 3, 3 3 (1) : 1
+1 4, 2 1 (1) : 1
+1 5, 1 2 (1) : 1
+2 1, 2 1 (1) : 1
+2 2, 1 2 (1) : 1
+2 3, 2 3 (1) : 1
+2 4, 3 3 (1) : 1
+2 5, 2 1 (1) : 1
+3 1, 3 1 (1) : 1
+3 2, 2 1 (1) : 1
+3 3, 1 2 (1) : 1
+3 4, 2 3 (1) : 1
+3 5, 3 3 (1) : 1
+4 1, 2 3 (1) : 1
+4 2, 3 1 (1) : 1
+4 3, 2 1 (1) : 1
+4 4, 1 2 (1) : 1
+4 5, 2 3 (1) : 1
+5 1, 1 2 (1) : 1
+5 2, 2 3 (1) : 1
+5 3, 3 1 (1) : 1
+5 4, 2 1 (1) : 1
+5 5, 1 2 (1) : 1
