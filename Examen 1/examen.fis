@@ -1,0 +1,46 @@
+[System]
+Name='examen'
+Type='mamdani'
+Version=2.0
+NumInputs=2
+NumOutputs=1
+NumRules=9
+AndMethod='min'
+OrMethod='max'
+ImpMethod='min'
+AggMethod='max'
+DefuzzMethod='centroid'
+
+[Input1]
+Name='LuzSens'
+Range=[0 20]
+NumMFs=3
+MF1='Baja':'trapmf',[-7.2 -0.8 2 7.2]
+MF2='Media':'trimf',[4 10 16]
+MF3='Alta':'trapmf',[12.8 18 20.8 27.2]
+
+[Input2]
+Name='LuzDese'
+Range=[0 20]
+NumMFs=3
+MF1='Baja':'trapmf',[-7.2 -0.8 2 7.2]
+MF2='Media':'trimf',[4 10 16]
+MF3='Alta':'trapmf',[12.8 18 20.8 27.2]
+
+[Output1]
+Name='LuzSal'
+Range=[0 20]
+NumMFs=2
+MF1='OFF':'trapmf',[-7.2 -0.8 8 12]
+MF2='ON':'trapmf',[8 12 20.8 27.2]
+
+[Rules]
+1 1, 1 (1) : 1
+1 2, 2 (1) : 1
+1 3, 2 (1) : 1
+2 1, 1 (1) : 1
+2 2, 1 (1) : 1
+2 3, 2 (1) : 1
+3 1, 1 (1) : 1
+3 2, 1 (1) : 1
+3 3, 1 (1) : 1
