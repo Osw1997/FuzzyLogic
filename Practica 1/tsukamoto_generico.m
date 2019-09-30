@@ -10,25 +10,30 @@ z = -10:dx:10;
 % % Conjuntos difusos
 % Entrada 1
 f11 = gbellmf(x,  [21.5 2.5 0]);
-f12 = gbellmf(x,  [21.5 2.5 43]); f12(end - 5: end) = 1;
+f12 = gbellmf(x,  [21.5 2.5 43]); % f12(end - 5: end) = 1;
 fuzzy_ent1 = [f11; f12];
+% plot(x,fuzzy_ent1)
 % plot(x, fuzzy_ent1);
 % xlabel('x'); ylabel('\mu(x)');
 % title('Entrada 1'); axis([0 x(end) 0 1]);
 
 % Entrada 2
 f21 = gbellmf(y,  [27.5 2.5 0]);
-f22 = gbellmf(y,  [27.5 2.5 55]); f12(end - 10: end) = 1;
+f22 = gbellmf(y,  [27.5 2.5 55]); % f12(end - 10: end) = 1;
 fuzzy_ent2 = [f21; f22];
+% plot(y,fuzzy_ent2)
 % figure;
 % plot(y, fuzzy_ent2);
 % xlabel('y'); ylabel('\mu(y)');
 % title('Entrada 2'); axis([0 y(end) 0 1]);
 
 % Salida
-fz1 = gbellmf(z, [10 2.5 -10]);
-fz2 = gbellmf(z, [10 2.5 10]);
+a1 = 10; b1 = 2.5; c1 = -10;
+fz1 = gbellmf(z, [a1 b1 c1]);
+a2 = 10; b2 = 2.5; c2 = 10;
+fz2 = gbellmf(z, [a2 b2 c2]);
 fuzzy_sal = [fz1; fz2];
+plot(z, fuzzy_sal);
 % figure;
 % plot(z, fuzzy_sal);
 % xlabel('z'); ylabel('\mu(z)');
@@ -61,31 +66,30 @@ for xe = 1:size_x
         W2 = reglas(R_C2);
         
 %         Valor del conjunto universo asociado a W1
-        posiciones = fz1 == W1(:);
+%         posiciones = fz1 == W1(:);
+%         posiciones = round(fz1, 5) == round(W1(:), 5);
         Z1 = zeros(1,length(W1));
+%         Z1 = c1 + a1 * ((1 - R_C1(:)) / R_C1(:)) ^ (1 / (2 * b1));
         for n = 1:length(W1)
-            Z1(n) = z(posiciones(n,:));
+%             Z1(n) = z(posiciones(n,:));
+            Z1(n) = c1 + a1 * ((1 - W1(n)) / W1(n))^(1 / (2 * b1));
+        end
+%         Valor del conjunto universo asociado a W2
+%         posiciones = fz2 == W2(:);
+%         posiciones = round(fz2, 5) == round(W2(:), 5);
+        Z2 = zeros(1,length(W1));
+        for n = 1:length(W2)
+%             Z2(n) = z(posiciones(n,:));
+            Z2(n) = c2 + a2 * ((1 - W2(n)) / W2(n))^(1 / (2 * b2));
         end
 
-%         % % Obteniendo cortes de cada variable difusa de salida
-%         % Corte para C1
-%         temp_fz1 = fz1;
-%         temp_fz1(temp_fz1 > C_C1) = C_C1;
-%         % Corte para C2
-%         temp_fz2 = fz2;
-%         temp_fz2(temp_fz2 > C_C2) = C_C2;
-% 
-%         % Curva final 
-%         curva = max([temp_fz1; temp_fz2]);
-%         % Centro de gravedad 
-%         CG = sum(z .* curva) / sum(curva);
-        
-        XY(xe, ye) = CG;
+        Z0 = (sum(Z1 .* W1) + sum(Z2 .* W2)) / sum([W1 W2]);
+        XY(xe, ye) = Z0;
     end     
 end
 [X,Y] = meshgrid(y,x);
 figure;
 plot3(X,Y,XY);
 xlabel('x'); ylabel('y'); zlabel('\mu(x,y)');
-title('Salida'); axis([y(1) y(end) x(1) x(end) -6 6]);
+title('Salida'); axis([y(1) y(end) x(1) x(end) -15 15]);
 grid on;
