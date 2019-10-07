@@ -8,7 +8,6 @@ U = [0 0 1 1;
 % Se plotean los datos 
 plot(X(1,:), X(2,:), 'ro', 'Linewidth', 3)
 axis([0 6 0 2]); grid on; hold on;
-pause;
 % Determinación de número de clusters
 [no_clust, datos] = size(X);
 [filas_cumulos,  datos_cum] = size(U);
@@ -30,13 +29,11 @@ for m = 1:2
     for n = 1:filas_cumulos
         U(n,:) = dist(n,:) == min(dist);
     end
-%     Se plotea el resultado
-    r = plot(V(1,:), V(2,:), 'ob', 'LineWidth', 5); hold on
-    V
-    pause(2);
-    if m ~= 2
-        set(r, 'visible', 'off')
+    
+    for n = 1:filas_cumulos
+        plot(V());
     end
-%     U 
+    
+%     U
 end
 
