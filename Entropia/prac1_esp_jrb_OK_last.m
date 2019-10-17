@@ -1,8 +1,9 @@
 clc; close all; clear all;
 %ABRIR ARCHIVO 
 % archivo=fopen('./principito.txt','r');
-archivo=fopen('./also_spratch_zarathustra.txt','r');
-cadena = fscanf(archivo,'%c'); %guardo archivo en un vector
+archivo=fopen('./beyond_good_evil.txt','r');
+cadena = fscanf(archivo,'%c'); %guardo archivo en un vectorcadena
+cadena = cadena(1:1000);
 numcaracteres=length(cadena);  %numero de caracteres del archivo
 fclose(archivo);
 %CIERRE DE ARCHIVO
