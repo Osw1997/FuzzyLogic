@@ -3,23 +3,32 @@
 X = [1 4 4 5.5;
      1 1 2 1];
 % Matriz inicial para 2 cluster
-U = [0 0 1 1;
-     1 1 0 0];
+U = [0 1 0 1;
+     1 0 1 0];
 % Se plotean los datos 
 plot(X(1,:), X(2,:), 'ro', 'Linewidth', 3)
 axis([0 6 0 2]); grid on; hold on;
-% pause;
+pause;
 % Determinación de número de clusters
 [no_clust, datos] = size(X);
 [filas_cumulos,  datos_cum] = size(U);
-% Se itera con base a un parámetro epsilon
-epocas = 10
-for m = 1:epocas
+% OTro parámtero de detención (ejemplo)
+cont = 0;
+% % Parámetros de parada
+% Valor de detención
+J_parada = 2.4;
+% Valor actual de la iteración actual
+J = Inf;
+V = [randperm(4,2); randperm(4,2)];
+% % Se itera con base a un parámetro epsilon
+while (J_parada < J)
+%     Se plotea el resultado
+    r = plot(V(1,:), V(2,:), 'ob', 'LineWidth', 5); hold on
     % Centroides
     V = zeros(no_clust, filas_cumulos);
     for n = 1:no_clust
         V(n,:) = calc_centroide(X, U(n,:));
-    end
+    end 
     V = V';
     % Distancias entre centroides a datos
     dist = zeros(filas_cumulos, datos_cum);
@@ -27,19 +36,23 @@ for m = 1:epocas
         dist(n,:) = sqrt(sum((X - repmat(V(:,n),1,datos_cum)).^2));
     end
     dist
-    % Se actualiza U difuso
+%     Función de costo
+    J = sum(sum((dist .* U)'))
+    % Se actualiza U
     for n = 1:filas_cumulos
-%         U(n,:) = dist(n,:) == min(dist);
-        U(n,:) = ((dist(n,1:end) ./ dist(1,1:end)).^2 + (dist(n,1:end) ./  dist(2, 1:end)).^2).^-1;
+        U(n,:) = dist(n,:) == min(dist); 
     end
-    U
 %     Se plotea el resultado
-    r = plot(V(1,:), V(2,:), 'ob', 'LineWidth', 5); hold on
+%     r = plot(V(1,:), V(2,:), 'ob', 'LineWidth', 5); hold on
     V
-%     pause(2);
-    pause;
-    if m ~= epocas 
+    pause(2);
+    if J_parada < J
         set(r, 'visible', 'off')
     end
+    if cont > 2
+        break;
+    end
+    cont = cont + 1;
 %     U 
 end
+
