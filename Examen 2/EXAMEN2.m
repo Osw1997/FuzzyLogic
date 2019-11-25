@@ -1,7 +1,7 @@
 clear all; close all; clc;
 
 %Leer la imagen
-color = imread('pic2.png');
+color = imread('pic2_.jpeg');
 
 %para ver la imagen
 figure
@@ -22,13 +22,13 @@ figure
 [x y] = find(imagen<180);
 x = x'; 
 y = y';
-c = 3;
+c = 4;
 % %
 ejeX = 0:3:240;
 ejeY = 0:3:320;
 % %
-alpha = 01.25;
-beta = 0.25;
+alpha = 01;
+beta = 0.1;
 delta = 0;
 k = 1;
 
@@ -51,7 +51,7 @@ disp('Ya paso por aqui')
 % %
 M1(k) = max(max(M));
 
-while (delta < 1) || (k < 5)
+while (delta < 1) || (k < 4)
     for i = 1:length(ejeX)
         for j = 1:length(ejeY)
             if M(j,i) == M1(k)
@@ -100,72 +100,123 @@ mesh(X,Y,M)
 % %
 %Empieza kmeans
 % Determinación de número de clusters
-X= [x,y];
 
-[no_clust, datos] = size(X);
-no_clust = 4
-U = zeros(no_clust, datos);
-U(1,1:4:end) = 1;
-U(2,2:4:end-1) = 1;
-U(3,3:4:end-2) = 1;
-U(4,4:4:end-3) = 1;
-% Determinación de número de clusters
+[y x] = find(imagen<180);
+P = [x y];
+datos = length(x);
+no_clust = 4;
+A = 4;
+B = 2;
+C = [EX; EY]'
+U = inicial(no_clust,datos);
+int = 0;
 
-[filas_cumulos,  datos_cum] = size(U);
+fig = [];
+nf = 1;
+li = 1;
+for i=2:length(x)
+    dif = x(i)-x(i-1);
+    if dif > 3
+        fig(nf,:) = [li,i-1];
+        li = i;
+        nf = nf + 1;
+    end
+end
+fig(nf,:)= [li,length(x)];
+
 % Se itera con base a un parámetro epsilon
-epocas = 1e3;
-%V = [EX;EY];
-for m = 1:epocas
-    % Centroides
-    %V = zeros(no_clust, filas_cumulos);
-    
-    if m==1
-        V = [EX;EY];
-    else
-        for i=1:no_clust
-           for j=1:2
-               V(i,j) = sum(U(i,:).*X(:,j)')/sum(U(i,:));
+epocas = 20;
+for ciclo=1:3
+    P = [x(fig(ciclo,1):fig(ciclo,2)) y(fig(ciclo,1):fig(ciclo,2))];
+    datos = length(P);
+    no_clust = 1;
+    A = 1;
+    B = 2;
+    C = [EX(ciclo); EY(ciclo)]'
+    U = inicial(no_clust,datos);
+    int = 0;
+while 1
+    %============= Calculo de Distancias ==============
+    int = int+1;
+    D = [];
+    Ji = 0;
+    for i=1:no_clust
+        for j=1:datos
+            d = 0;
+            for k=1:B
+                d = d+(P(j,k)-C(i,k))^2;
             end
+            D(i,j) = sqrt(d);
+        end
+        Ji = [Ji sum(D(i,:))]; %Suma las distancias de los datos a un clouster
+    end
+    D;
+    %============= Calculo de la U ==============
+    for i=1:A
+        k = strfind(D(:,i)',min(D(:,i)));
+        U(:,i) = 0;
+        U(k,i) = 1;
+    end
+    %================= Calculo de J ==========
+    J = sum(Ji); %suma todas las distancias hacia todos los clouster
+    %============== Actualizacion de Clouster =====================
+    for i=1:no_clust
+        for j=1:B
+            C(i,j) = sum(U(i,:).*P(:,j)')/sum(U(i,:));
         end
     end
-    V;
+    C;
+    %pause();
+    %=============================
+    if int==epocas
+        break;
+    end
     
-%     for n = 1:no_clust
-%         V(n,:) = calc_centroide(X, U(n,:));
-%     end
-    %%V = V';
-%     X11=X1/10;
-%     Y11=Y1/10;
-%     V=[X11;Y11];
-    %V=V';
-    % Distancias entre centroides a datos
-    dist = zeros(filas_cumulos, datos_cum);
-    for n = 1:filas_cumulos
-        dist(n,:) = sqrt(sum((X - repmat(V(:,n),1,datos_cum)).^2));
-    end
-    dist;
-    % Se actualiza U
-    for n = 1:filas_cumulos
-%         U(n,:) = dist(n,:) == min(dist);
-        U(n,:) = ((dist(n,1:end) ./ dist(1,1:end)).^2 + (dist(n,1:end) ./  dist(2, 1:end)).^2 + (dist(n,1:end) ./  dist(3, 1:end)).^2).^-1;
-    end
-%     Se plotea el resultado
-    %r = plot3(V(1,:), V(2,:), V(3,:), '*k', 'LineWidth', 5); hold on
-    V;
-%     pause(0.5);
-%     if m ~= epocas
-%       %  set(r, 'visible', 'off')
-%     end
-%     U 
+    
 end
+    CF(ciclo,:) = C;
+end
+
+C=CF;
+
 figure()
-% imshow(gris);
-imshow(imagen)
+imshow(imagen);
 hold on
-plot(V(2,:), V(1,:), '*r', 'LineWidth', 2);
-title('Algoritmo de montaña con IRIS.')
+plot(C(:,1), C(:,2), '*r', 'LineWidth', 2);
+title('Algoritmo de montaña con Kmeans.')
 xlabel(' X')
 ylabel(' Y')
 
 %Finaliza K-means
 
+% %
+%Seleccionar un cluster
+
+promt = 'Seleccione el cluster que quiere mostrar: ';
+clus =  input(promt);
+
+while 1
+    promt = 'Seleccione el cluster que quiere mostrar: ';
+    clus =  input(promt);
+    figure()
+    imshow(imagen);
+    hold on
+    plot(x(fig(clus,1):fig(clus,2)), y(fig(clus,1):fig(clus,2)),'*')
+end
+
+
+
+
+
+function U = inicial(Ncloster,Ndatos)
+
+h=rand(Ncloster,Ndatos);
+
+for i=1:Ndatos
+    %k=max(h(:,i))
+    k=strfind(h(:,i)',max(h(:,i)));
+    h(:,i)=0;
+    h(k,i)=1;
+end
+U = h;
+end
